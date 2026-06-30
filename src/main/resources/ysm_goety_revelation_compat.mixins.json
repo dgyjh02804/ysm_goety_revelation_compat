@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.dgy.ysmgoetycompat.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "ysm_goety_revelation_compat.refmap.json",
+    "mixins": [],
+    "client": [
+        "AccessorLivingEntityRenderer"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

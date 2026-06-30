@@ -1,0 +1,95 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+version = '1.0.0'
+group = 'com.dgy.ysmgoetycompat'
+
+base {
+    archivesName = 'ysm_goety_revelation_compat'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'ysm_goety_revelation_compat'
+            mods {
+                ysm_goety_revelation_compat {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', 'ysm_goety_revelation_compat'
+            mods {
+                ysm_goety_revelation_compat {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+
+    // Mixin annotation processor
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    add sourceSets.main, 'ysm_goety_revelation_compat.refmap.json'
+    config 'ysm_goety_revelation_compat.mixins.json'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes([
+            "Specification-Title"     : "ysm_goety_revelation_compat",
+            "Specification-Vendor"    : "dgyjh02804",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : project.jar.archiveVersion,
+            "Implementation-Vendor"   : "dgyjh02804",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs"            : "ysm_goety_revelation_compat.mixins.json"
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+// Copy refmap to classes directory so it's on the classpath during runClient
+task copyRefmapToClasses(type: Copy) {
+    dependsOn compileJava
+    from "${buildDir}/tmp/compileJava"
+    into "${buildDir}/classes/java/main"
+    include 'ysm_goety_revelation_compat.refmap.json'
+}
+classes.dependsOn(copyRefmapToClasses)
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
