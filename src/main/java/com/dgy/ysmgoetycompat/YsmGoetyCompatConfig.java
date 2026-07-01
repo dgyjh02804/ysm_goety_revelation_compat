@@ -8,50 +8,124 @@ import net.minecraftforge.fml.config.ModConfig;
 
 /**
  * Client-side configuration for the YSM-GoetyRevelation compatibility mod.
- * The only configurable value is the vertical head offset (in pixels)
- * used to position halo effects at the correct height above the player model.
+ * <p>
+ * Provides independent X/Y/Z position offsets and X/Y/Z rotation angles for
+ * each halo type so users can fine-tune both placement and orientation of
+ * {@code ascension_halo}, {@code broken_halo}, and {@code halo_of_the_end}.
+ * <p>
+ * Position offsets are in pixels (1 block = 16 pixels).
+ * Rotation angles are in degrees.
  */
 @OnlyIn(Dist.CLIENT)
 public class YsmGoetyCompatConfig {
 
     public static final ForgeConfigSpec CLIENT_SPEC;
 
-    /**
-     * Vertical offset in pixels (1 block = 16 pixels) from entity feet
-     * to the head center where halos should render.
-     * <p>
-     * Vanilla PlayerModel places the head at y=24 pixels = 1.5 blocks.
-     * YSM's custom models may have a different head height, so this
-     * value can be adjusted via the in-game mod config screen.
-     * <p>
-     * Default: 40 pixels = 2.5 blocks (1 extra block above vanilla head
-     * height to compensate for YSM model differences).
-     */
-    public static ForgeConfigSpec.DoubleValue headYOffset;
+    // ── ascension_halo ─────────────────────────────────────────────
+    public static ForgeConfigSpec.DoubleValue ascensionHaloXOffset;
+    public static ForgeConfigSpec.DoubleValue ascensionHaloYOffset;
+    public static ForgeConfigSpec.DoubleValue ascensionHaloZOffset;
+    public static ForgeConfigSpec.DoubleValue ascensionHaloXRot;
+    public static ForgeConfigSpec.DoubleValue ascensionHaloYRot;
+    public static ForgeConfigSpec.DoubleValue ascensionHaloZRot;
+
+    // ── broken_halo ────────────────────────────────────────────────
+    public static ForgeConfigSpec.DoubleValue brokenHaloXOffset;
+    public static ForgeConfigSpec.DoubleValue brokenHaloYOffset;
+    public static ForgeConfigSpec.DoubleValue brokenHaloZOffset;
+    public static ForgeConfigSpec.DoubleValue brokenHaloXRot;
+    public static ForgeConfigSpec.DoubleValue brokenHaloYRot;
+    public static ForgeConfigSpec.DoubleValue brokenHaloZRot;
+
+    // ── halo_of_the_end ────────────────────────────────────────────
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndXOffset;
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndYOffset;
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndZOffset;
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndXRot;
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndYRot;
+    public static ForgeConfigSpec.DoubleValue haloOfTheEndZRot;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         builder.comment("YSM GoetyRevelation Compatibility - Client Settings",
-                "Adjust the halo vertical offset if effects appear at the wrong height.");
-        builder.push("rendering");
+                "Adjust halo positions and rotations if effects appear at the wrong location or angle.",
+                "Position offsets are in pixels (1 block = 16 pixels).",
+                "Rotation angles are in degrees.",
+                "",
+                "Coordinate system (Minecraft world space):",
+                "  X = left(-) / right(+)",
+                "  Y = up(+) / down(-)",
+                "  Z = forward(+) / back(-)",
+                "  X-rotation = pitch (positive = look down, negative = look up)",
+                "  Y-rotation = yaw (positive = turn right, negative = turn left)",
+                "  Z-rotation = roll (positive = tilt right, negative = tilt left)");
 
-        headYOffset = builder
-                .comment("Vertical offset in pixels from entity feet where halo effects render.",
-                        "Vanilla Minecraft places the player model head at y=24 (1.5 blocks).",
-                        "Increase this value to move halos higher; decrease to move lower.",
-                        "Range: 0 ~ 128 pixels (0 ~ 8 blocks)")
-                .defineInRange("headYOffset", 40.0D, 0.0D, 128.0D);
-
-        builder.pop();
+        buildAscensionHaloSection(builder);
+        buildBrokenHaloSection(builder);
+        buildHaloOfTheEndSection(builder);
 
         CLIENT_SPEC = builder.build();
     }
 
-    /**
-     * Register the client config with Forge's mod config system.
-     * Must be called during mod construction on the client side.
-     */
+    private static void buildAscensionHaloSection(ForgeConfigSpec.Builder builder) {
+        builder.push("ascension_halo");
+        builder.comment("Position & rotation for the Ascension Halo (goety_revelation:ascension_halo).",
+                "The standard golden halo granted by the Ascension ability.");
+
+        builder.push("position");
+        ascensionHaloXOffset = builder.comment("Horizontal offset (pixels).").defineInRange("xOffset", 0.0D, -128.0D, 128.0D);
+        ascensionHaloYOffset = builder.comment("Vertical offset (pixels).").defineInRange("yOffset", 30.0D, 0.0D, 128.0D);
+        ascensionHaloZOffset = builder.comment("Forward/back offset (pixels).").defineInRange("zOffset", -8.0D, -128.0D, 128.0D);
+        builder.pop();
+
+        builder.push("rotation");
+        ascensionHaloXRot = builder.comment("X-axis rotation (degrees). Positive = tilt downward, negative = tilt upward.").defineInRange("xRot", -90.0D, -180.0D, 180.0D);
+        ascensionHaloYRot = builder.comment("Y-axis rotation (degrees).").defineInRange("yRot", 0.0D, -180.0D, 180.0D);
+        ascensionHaloZRot = builder.comment("Z-axis rotation (degrees).").defineInRange("zRot", 0.0D, -180.0D, 180.0D);
+        builder.pop();
+
+        builder.pop();
+    }
+
+    private static void buildBrokenHaloSection(ForgeConfigSpec.Builder builder) {
+        builder.push("broken_halo");
+        builder.comment("Position & rotation for the Broken Ascension Halo (goety_revelation:broken_halo).");
+
+        builder.push("position");
+        brokenHaloXOffset = builder.comment("Horizontal offset (pixels).").defineInRange("xOffset", 0.0D, -128.0D, 128.0D);
+        brokenHaloYOffset = builder.comment("Vertical offset (pixels).").defineInRange("yOffset", 30.0D, 0.0D, 128.0D);
+        brokenHaloZOffset = builder.comment("Forward/back offset (pixels).").defineInRange("zOffset", -8.0D, -128.0D, 128.0D);
+        builder.pop();
+
+        builder.push("rotation");
+        brokenHaloXRot = builder.comment("X-axis rotation (degrees).").defineInRange("xRot", -90.0D, -180.0D, 180.0D);
+        brokenHaloYRot = builder.comment("Y-axis rotation (degrees).").defineInRange("yRot", 0.0D, -180.0D, 180.0D);
+        brokenHaloZRot = builder.comment("Z-axis rotation (degrees).").defineInRange("zRot", 0.0D, -180.0D, 180.0D);
+        builder.pop();
+
+        builder.pop();
+    }
+
+    private static void buildHaloOfTheEndSection(ForgeConfigSpec.Builder builder) {
+        builder.push("halo_of_the_end");
+        builder.comment("Position & rotation for the Halo of the End (goety_revelation:halo_of_the_end).");
+
+        builder.push("position");
+        haloOfTheEndXOffset = builder.comment("Horizontal offset (pixels).").defineInRange("xOffset", 0.0D, -128.0D, 128.0D);
+        haloOfTheEndYOffset = builder.comment("Vertical offset (pixels).").defineInRange("yOffset", 20.0D, 0.0D, 128.0D);
+        haloOfTheEndZOffset = builder.comment("Forward/back offset (pixels).").defineInRange("zOffset", -5.0D, -128.0D, 128.0D);
+        builder.pop();
+
+        builder.push("rotation");
+        haloOfTheEndXRot = builder.comment("X-axis rotation (degrees).").defineInRange("xRot", 0.0D, -180.0D, 180.0D);
+        haloOfTheEndYRot = builder.comment("Y-axis rotation (degrees).").defineInRange("yRot", 0.0D, -180.0D, 180.0D);
+        haloOfTheEndZRot = builder.comment("Z-axis rotation (degrees).").defineInRange("zRot", 180.0D, -180.0D, 180.0D);
+        builder.pop();
+
+        builder.pop();
+    }
+
     public static void register() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
     }
