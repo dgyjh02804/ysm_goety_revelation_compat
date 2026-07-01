@@ -1,0 +1,45 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+license = "MIT"
+
+[[mods]]
+modId = "ysm_goety_revelation_compat"
+version = "1.0.2"
+displayName = "YSM GoetyRevelation 兼容"
+authors = "dgyjh02804"
+description = '''
+桥接 YSM (Yes Steve Model) 和 GoetyRevelation (终末之环) 的渲染兼容性。
+确保在使用 YSM 自定义玩家模型时，GoetyRevelation 的光环 (PlayerHaloLayer)
+和无敌特效 (PlayerInvulLayer) 能正常渲染。
+
+使用 Forge 的 RenderLivingEvent.Post 事件在不修改任一 Mod 原有代码的前提下
+桥接两个渲染系统。
+'''
+
+[[dependencies.ysm_goety_revelation_compat]]
+    modId = "forge"
+    mandatory = true
+    versionRange = "[47,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.ysm_goety_revelation_compat]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[1.20.1,1.21)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.ysm_goety_revelation_compat]]
+    modId = "goety_revelation"
+    mandatory = false
+    versionRange = "[2.3,)"
+    ordering = "AFTER"
+    side = "CLIENT"
+
+[[dependencies.ysm_goety_revelation_compat]]
+    modId = "yes_steve_model"
+    mandatory = false
+    versionRange = "[2.6,)"
+    ordering = "AFTER"
+    side = "CLIENT"

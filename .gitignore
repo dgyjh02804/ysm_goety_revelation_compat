@@ -24,6 +24,7 @@ mods/
 
 # Build packaging output
 META-INF/
+!src/main/resources/META-INF/
 
 # Excluded folders
 z1gned/
