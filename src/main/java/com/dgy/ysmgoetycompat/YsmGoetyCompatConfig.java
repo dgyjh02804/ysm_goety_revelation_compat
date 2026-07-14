@@ -57,6 +57,15 @@ public class YsmGoetyCompatConfig {
     public static ForgeConfigSpec.DoubleValue unholyHatYRot;
     public static ForgeConfigSpec.DoubleValue unholyHatZRot;
 
+    // ── unholy_hat_halo ────────────────────────────────────────────
+    public static ForgeConfigSpec.BooleanValue unholyHatHaloEnabled;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloXOffset;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloYOffset;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloZOffset;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloXRot;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloYRot;
+    public static ForgeConfigSpec.DoubleValue unholyHatHaloZRot;
+
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
@@ -77,6 +86,7 @@ public class YsmGoetyCompatConfig {
         buildBrokenHaloSection(builder);
         buildHaloOfTheEndSection(builder);
         buildUnholyHatSection(builder);
+        buildUnholyHatHaloSection(builder);
 
         CLIENT_SPEC = builder.build();
     }
@@ -162,6 +172,28 @@ public class YsmGoetyCompatConfig {
         unholyHatXRot = builder.comment("X-axis rotation (degrees).").defineInRange("xRot", 0.0D, -180.0D, 180.0D);
         unholyHatYRot = builder.comment("Y-axis rotation (degrees).").defineInRange("yRot", 0.0D, -180.0D, 180.0D);
         unholyHatZRot = builder.comment("Z-axis rotation (degrees).").defineInRange("zRot", 180.0D, -180.0D, 180.0D);
+        builder.pop();
+
+        builder.pop();
+    }
+
+    private static void buildUnholyHatHaloSection(ForgeConfigSpec.Builder builder) {
+        builder.push("unholy_hat_halo");
+        builder.comment("Position & rotation for the Unholy Hat Halo (goety:unholy_hat_halo).",
+                "The halo-only variant from the base Goety mod.");
+
+        unholyHatHaloEnabled = builder.comment("Whether to render this halo.").define("enabled", true);
+
+        builder.push("position");
+        unholyHatHaloXOffset = builder.comment("Horizontal offset (pixels).").defineInRange("xOffset", 0.0D, -128.0D, 128.0D);
+        unholyHatHaloYOffset = builder.comment("Vertical offset (pixels).").defineInRange("yOffset", 22.0D, 0.0D, 128.0D);
+        unholyHatHaloZOffset = builder.comment("Forward/back offset (pixels).").defineInRange("zOffset", 0.0D, -128.0D, 128.0D);
+        builder.pop();
+
+        builder.push("rotation");
+        unholyHatHaloXRot = builder.comment("X-axis rotation (degrees).").defineInRange("xRot", 0.0D, -180.0D, 180.0D);
+        unholyHatHaloYRot = builder.comment("Y-axis rotation (degrees).").defineInRange("yRot", 0.0D, -180.0D, 180.0D);
+        unholyHatHaloZRot = builder.comment("Z-axis rotation (degrees).").defineInRange("zRot", 180.0D, -180.0D, 180.0D);
         builder.pop();
 
         builder.pop();

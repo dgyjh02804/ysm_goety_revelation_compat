@@ -196,6 +196,18 @@ public class GoetyLayerRenderer {
         try { return (boolean) hasCurioItemHandle.invoke(entity, unholyHat); } catch (Throwable t) { return false; }
     }
 
+    /**
+     * Checks whether the entity wears an unholy hat halo (halo-only variant)
+     * via {@code CuriosFinder.hasCurio(LivingEntity, Item)} from Goety.
+     */
+    private static boolean hasUnholyHatHalo(LivingEntity entity) {
+        initReflection();
+        if (hasCurioItemHandle == null) return false;
+        Item hatHalo = ForgeRegistries.ITEMS.getValue(new ResourceLocation("goety", "unholy_hat_halo"));
+        if (hatHalo == null) return false;
+        try { return (boolean) hasCurioItemHandle.invoke(entity, hatHalo); } catch (Throwable t) { return false; }
+    }
+
     public static void renderEffects(
             AbstractClientPlayer player,
             com.mojang.blaze3d.vertex.PoseStack poseStack,
@@ -378,6 +390,24 @@ public class GoetyLayerRenderer {
                         YsmGoetyCompatConfig.unholyHatXRot.get(),
                         YsmGoetyCompatConfig.unholyHatYRot.get(),
                         YsmGoetyCompatConfig.unholyHatZRot.get()
+                );
+                renderSingleCurioItem(player, item, offsets, poseStack, bufferSource,
+                        packedLight, limbSwing, limbSwingAmount, partialTick,
+                        ageInTicks, netHeadYaw, headPitch, playerRenderer);
+            }
+        }
+
+        // unholy_hat_halo (halo-only variant)
+        if (YsmGoetyCompatConfig.unholyHatHaloEnabled.get() && hasUnholyHatHalo(player)) {
+            Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation("goety", "unholy_hat_halo"));
+            if (item != null) {
+                HaloOffsets offsets = new HaloOffsets(
+                        YsmGoetyCompatConfig.unholyHatHaloXOffset.get(),
+                        YsmGoetyCompatConfig.unholyHatHaloYOffset.get(),
+                        YsmGoetyCompatConfig.unholyHatHaloZOffset.get(),
+                        YsmGoetyCompatConfig.unholyHatHaloXRot.get(),
+                        YsmGoetyCompatConfig.unholyHatHaloYRot.get(),
+                        YsmGoetyCompatConfig.unholyHatHaloZRot.get()
                 );
                 renderSingleCurioItem(player, item, offsets, poseStack, bufferSource,
                         packedLight, limbSwing, limbSwingAmount, partialTick,
